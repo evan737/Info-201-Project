@@ -25,7 +25,7 @@ viz_1_tab <- tabPanel("Viz 1 tab title",
   )
 )
 
-## VIZ 2 TAB INFO
+## VIZ 2 TAB INFO, I can do this one - dv 
 
 viz_2_sidebar <- sidebarPanel(
   h2("Options for graph"),
