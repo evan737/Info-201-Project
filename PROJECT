@@ -1,0 +1,107 @@
+library(shiny)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(readr)
+rm(list = ls())
+Air_Qualitydf <- read.csv("AQI By State 1980-2022.csv")
+gas_pricesdf <- read.csv("GASREGW.csv")
+# Assuming your datasets are read into these two data frames
+# air_quality <- read.csv("path_to/aqibystate.csv", stringsAsFactors = FALSE)
+# gas_prices <- read.csv("path_to/GASREGW.csv", stringsAsFactors = FALSE)
+
+# UI
+ui <- navbarPage("Air Quality and Gas Prices",
+                 tabPanel("Gas Prices",
+                          sidebarLayout(
+                            sidebarPanel(
+                              # Add input controls as needed, for example:
+                              dateRangeInput("dateRange",
+                                             label = "Choose Date Range for Gas Prices",
+                                             start = "1990-01-01", end = Sys.Date()
+                              )
+                            ),
+                            mainPanel(
+                              plotlyOutput("gasPricesPlot")
+                            )
+                          )
+                 ),
+                 tabPanel("Air Quality",
+                          sidebarLayout(
+                            sidebarPanel(
+                              # Input controls for air quality, for example:
+                              selectInput("state", "Select State", 
+                                          choices = unique(Air_Qualitydf$State)),
+                              sliderInput("yearRange", "Select Year Range", 
+                                          min = min(Air_Qualitydf$Year), 
+                                          max = max(Air_Qualitydf$Year), 
+                                          value = c(min(Air_Qualitydf$Year), max(Air_Qualitydf$Year)))
+                            ),
+                            mainPanel(
+                              plotlyOutput("airQualityPlot")
+                            )
+                          )
+                 ),
+                 tabPanel("Comparison",
+                          sidebarLayout(
+                            sidebarPanel(
+                              # Input controls for comparison
+                            ),
+                            mainPanel(
+                              plotlyOutput("comparisonPlot")
+                            )
+                          )
+                 )
+)
+
+# Server
+server <- function(input, output) {
+  output$gasPricesPlot <- renderPlotly({
+    # Filter gas_prices based on the date range selected by the user
+    filtered_gas_prices <- gas_prices %>%
+      filter(as.Date(DATE) >= input$dateRange[1] & as.Date(DATE) <= input$dateRange[2])
+    
+    # Plotting the gas prices
+    p <- ggplot(filtered_gas_prices, aes(x = as.Date(DATE), y = GASREGW)) +
+      geom_line() +
+      labs(title = "Gas Prices Over Time", x = "Date", y = "Gas Price ($)")
+    ggplotly(p)
+  })
+  
+  output$airQualityPlot <- renderPlotly({
+    # Filter air_quality based on the state and year range selected by the user
+    filtered_air_quality <- Air_Qualitydf %>%
+      filter(State == input$state,
+             Year >= input$yearRange[1], Year <= input$yearRange[2])
+    
+    # Plotting the air quality
+    p <- ggplot(filtered_air_quality, aes(x = Year, y = Good_Days)) + # Assuming Good_Days is a column
+      geom_line() +
+      labs(title = paste("Air Quality in", input$state), x = "Year", y = "Good Air Quality Days")
+    ggplotly(p)
+  })
+  
+  output$comparisonPlot <- renderPlotly({
+    # For the comparison, you will need to join the two datasets and create a comparative plot
+    # This is an example and may need to be adjusted based on the actual comparison you want to perform
+    
+    # Example: Comparing the average gas price to the average number of good air quality days per year
+    comparison_df <- gas_prices %>%
+      group_by(Year = as.integer(substr(DATE, 1, 4))) %>%
+      summarize(Average_Gas_Price = mean(GASREGW, na.rm = TRUE)) %>%
+      inner_join(Air_Qualitydf %>% 
+                   group_by(Year) %>% 
+                   summarize(Average_Good_Days = mean(Good_Days, na.rm = TRUE)), by = "Year")
+    
+    # Plotting the comparison
+    p <- ggplot(comparison_df, aes(x = Year)) +
+      geom_line(aes(y = Average_Gas_Price, color = "Gas Price")) +
+      geom_line(aes(y = Average_Good_Days, color = "Air Quality")) +
+      labs(title = "Comparison of Gas Price and Air Quality",
+           x = "Year", y = "Average Values", color = "Metric")
+    ggplotly(p)
+  })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
