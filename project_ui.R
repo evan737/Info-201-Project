@@ -3,7 +3,11 @@ introduction_tab <- tabPanel("Introduction",
                              fluidPage(
                                img("", src = "https://wallpapercave.com/wp/wp6100468.jpg", height = "300px", width = "100%", style = "object-fit: cover;"),
                                h1("Welcome to the Air Quality Analysis App"),
-                               p("This app provides insights into air quality across different states, years, and its correlation with gas prices.")
+                               p("This app provides insights into air quality across different states, years, and its correlation with gas prices.
+                                 In a world full of pollution and climate change it has become imperative to take a step back and look at what can make a difference in pollution, whether that be with something in daily life such as cars or with entire industries such as farming.
+                             This project looks at a relationship between the price of gas and air quality. During this project, we looked at three main questions: How does air quality vary from state to state? How does air quality vary from year to year? Does the price of gas have an inverse relationship with air quality index? 
+                               We found two main sources that guided our study, https://www.kaggle.com/datasets/adampq/air-quality-index-by-state-1980-2022, and https://www.kaggle.com/datasets/juliatroni/us-gas-prices. The first data set provided insight into how air quality differs by state and how it differs from year to year. The data set from this source is extremely large and complex, and so our group worked to condense it and take only the necessary information from it. The second data set was about gas prices from 500 different gas stations throughout the country and averaged. The data is from every Monday for multiple decades.
+                               With these two data sets, there are no real ethical issues posed. This is because it doesn't involve people, and it doesn't involve any sort of subjective data. The main limitation with the study would be found in the Air Quality data frame. The air quality index appears to be highly inflated, however it still provides a very accurate way to compare the air quality from state to state, year to year, and to different gas prices for each year.")
                              ))
 
 ## TAB 2: MEDIAN AQI BY YEAR
