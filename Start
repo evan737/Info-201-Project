@@ -1,0 +1,53 @@
+library(shiny)
+library(readr)
+library(ggplot2)
+
+
+aqi_data <- read.csv("AQI By State 1980-2022.csv")
+gas_prices <- read.csv("GASREGW.csv")
+
+# Define UI
+ui <- navbarPage("Air Quality Analysis",
+                 tabPanel("Introduction", 
+                          fluidPage(
+                            h1("Welcome to the Air Quality Analysis App"),
+                            p("This app provides insights into air quality across different states, years, and its correlation with gas prices.")
+                          )),
+                 tabPanel("Median AQI by Year",
+                          fluidPage(
+                            textInput("yearInput", "Enter Year", value = "2020"),
+                            actionButton("submitYear", "Get Median AQI"),
+                            plotOutput("medianAqiPlot")
+                          )),
+                 tabPanel("Average AQI by State",
+                          fluidPage(
+                            selectInput("stateInput", "Select State", choices = unique(aqi_data$State)),
+                            actionButton("submitState", "Get Average AQI"),
+                            textOutput("averageAqiText")
+                          )),
+                 tabPanel("AQI by Gas Price",
+                          fluidPage(
+                            numericInput("gasPriceInput", "Enter Gas Price", value = 2),
+                            actionButton("submitGasPrice", "Get Common AQI"),
+                            textOutput("commonAqiText")
+                          )),
+                 tabPanel("Conclusion",
+                          fluidPage(
+                            h1("Conclusion"),
+                            p("Thank you for exploring air quality data with our app.")
+                          ))
+)
+
+# Define server logic
+server <- function(input, output) {
+  # Add reactive event for Median AQI by Year
+  # Similarly, add for other tabs
+  
+  # You will need to implement the logic to calculate and display:
+  # - Median AQI by the given year
+  # - Average AQI by the selected state
+  # - Common AQI for the entered gas price
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
