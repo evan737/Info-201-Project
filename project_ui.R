@@ -86,32 +86,10 @@ tab_4 <- tabPanel("AQI by Gas Price",
 ## TAB 5: CONCLUSION
 
 conclusion_tab <- tabPanel("Conclusion",
-                           fluidPage(
-                             titlePanel(tags$span("Key Takeaways", style = "color: orange; font-size: 60px;")),
-                             sidebarLayout(
-                               sidebarPanel(
-                                 h3("Summary"),
-                                 p("After thorough analysis of air quality data and gas prices, several key takeaways emerge:"),
-                                 tags$ul(
-                                   tags$li(" The whole project was centered around comparing gas prices with air quality index. We found that there was not a clear link between the two variables. This came as a surprise to us, however it didn't hinder the project as the point was to prove or disprove a link between the variables. The second takeaway from the study was that the AQI varied a lot year to year. Between 2000-2008, the AQI was always above 800. This is an important thing to note, however it does not prove any link to gas prices as they varied throughout this time. The last major takeaway from this was that the states with the highest AQI's tended to be the most populated and most densely populated ones. This did not come as a surprise, but is something important to note. Overall, the project was a success, even if the theory that gas price may have a strong correlation to AQI was disproven. We came out of this project with a renewed interest in climate change and in looking for answers as to mitigate its effects.")
-                               ),
-                               mainPanel(
-                                 h3("Visualization Summary"),
-                                 p("Below are the key visualizations that support our conclusions:"),
-                                 tags$ol(
-                                   tags$li("Median AQI by Year: This visualization demonstrates how air quality varies over time, allowing us to identify trends and potential drivers of pollution fluctuations."),
-                                   tags$li("Average AQI by State: By examining average AQI across different states, we gain insights into regional differences and the impact of local factors on air quality."),
-                                   tags$li("AQI by Gas Price: This visualization illustrates the relationship between gas prices and air quality, highlighting the influence of economic factors on pollution levels.")
-                                 ),
-                                 h3(""),
-                                 img(src = "https://www.akcp.com/wp-content/uploads/2021/03/air-quality-1600x1000-1.jpg", height = 400, width = "100%"),  # Adjust the height and width as needed
-                                 h3("Next Steps"),
-                                 p("Moving forward, further research could explore additional factors influencing air quality, such as weather patterns, industrial activity, and urban planning.")
-                               )
-                             )
-                           )
-)
-
+         fluidPage(
+           h1("Conclusion"),
+           p("Throughout the study, we came away with a couple major takeaways. The whole project was centered around comparing gas prices with air quality index. We found that there was not a clear link between the two variables. This came as a surprise to us, however it didn't hinder the project as the point was to prove or disprove a link between the variables. The second takeaway from the study was that the AQI varied a lot year to year. Between 2000-2008, the AQI was always above 800. This is an important thing to note, however it does not prove any link to gas prices as they varied throughout this time. The last major takeaway from this was that the states with the highest AQI's tended to be the most populated and most densely populated ones. This did not come as a surprise, but is something important to note. Overall, the project was a success, even if the theory that gas price may have a strong correlation to AQI was disproven. We came out of this project with a renewed interest in climate change and in looking for answers as to mitigate its effects.")
+         ))
 
 ui <- navbarPage("The Link between Gas Prices and Air Quality",
   introduction_tab,
