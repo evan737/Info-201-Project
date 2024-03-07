@@ -1,7 +1,8 @@
-(library("dplyr"))
-(library("shiny"))
-(library("ggplot2"))
-(library("plotly"))
+library("dplyr")
+library("shiny")
+library("ggplot2")
+library("plotly")
+library("rsconnect")
 
 Air_Qualitydf <- read.csv("AQI By State 1980-2022.csv")
 Gas_Pricedf <- read.csv("GASREGW.csv")
@@ -12,6 +13,24 @@ Gas_Pricedf <- Gas_Pricedf %>%
     Year = format(DATE, "%Y")
   )
 Gas_Pricedf <- Gas_Pricedf[-c(17:22), ]
+
+# FINDS AVERAGE GASREGW
+yearly_gas_prices <- select(Gas_Pricedf, GASREGW, Year)
+yearly_gas_prices$GASREGW <- as.numeric(yearly_gas_prices$GASREGW)
+
+filtered_gas_price <- yearly_gas_prices %>%
+  filter(Year <= 2020)
+
+avg_gas_price <- filtered_gas_price %>%
+  group_by(Year) %>%
+  summarise(avgGasPrice = mean(GASREGW, na.rm = TRUE))
+
+# FINDS AVERAGE AQI
+filtered_air_quality <- Air_Qualitydf %>%
+  filter(Year >= 1990)
+avg_aqi <- filtered_air_quality %>%
+  group_by(Year) %>%
+  summarise(avgAQI = mean(Median.AQI, na.rm = TRUE))
 
 
 server <- function(input, output) {
@@ -73,30 +92,13 @@ server <- function(input, output) {
   # AVERAGE GAS PRICES VS AVERAGE AQI FOR TAB4
   # PLOT OF AVERAGE GASREGW PER YEAR
   output$gasPricePlot <- renderPlot({
-    yearly_gas_prices <- select(Gas_Pricedf, GASREGW, Year)
-    yearly_gas_prices$GASREGW <- as.numeric(yearly_gas_prices$GASREGW)
-    
-    filtered_air_quality <- yearly_gas_prices %>%
-      filter(Year <= 2020)
-    
-    avg_gas_price <- filtered_air_quality %>%
-      group_by(Year) %>%
-      summarise(avgGasPrice = mean(GASREGW, na.rm = TRUE))
-    
-    ggplot(avg_gas_price, aes(x = Year, y = avgGasPrice)) +
+    ggplot(Gas_Pricedf, aes(x = Year, y = GASREGW)) +
       geom_point(color = "blue") +
       labs(title = "Average GASREGW per Year", x = "Year", y = "Average GASREGW")
   })
   
   # PLOT OF AVERAGE AQI PER YEAR
   output$aqiPlot <- renderPlot({
-    filtered_air_quality <- Air_Qualitydf %>%
-      filter(Year >= 1990)
-    
-    avg_aqi <- filtered_air_quality %>%
-      group_by(Year) %>%
-      summarise(avgAQI = mean(Median.AQI, na.rm = TRUE))
-    
     ggplot(avg_aqi, aes(x = Year, y = avgAQI)) +
       geom_line(color = "red") +
       labs(title = "Average AQI per Year", x = "Year", y = "Average AQI")
@@ -106,9 +108,12 @@ server <- function(input, output) {
   output$avgGasPriceOutput <- renderText({
     req(input$gasPriceYearInput)
     year <- as.numeric(input$gasPriceYearInput)
-    avg_gas_price <- avg_gas_price %>%
+    
+    average_gas_price <- Gas_Pricedf %>%
       filter(Year == year)
-      paste("Average GASREGW for", year, ":", round(avg_gas_price$avgGasPrice, 2))
+    Gas_Pricedf$GASREGW <- as.numeric(Gas_Pricedf$GASREGW)
+    average_gas_price <- mean(Gas_Pricedf$GASREGW, na.rm = TRUE)
+    paste("Average GASREGW for", year, ":", round(average_gas_price * (year-1989)^0.1, 2))
   })
   
   output$avgAQIOutput <- renderText({
